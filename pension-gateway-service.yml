@@ -1,0 +1,162 @@
+﻿#eureka config
+eureka:
+  instance:
+    virtualHostName: ${spring.application.name}
+    hostname: localhost
+    appname: ${spring.application.name}
+    #appGroupName: ${service.eureka.appGroupName}  # integration group
+    preferIpAddress: true  #true -> display ip address ; false -> display server name
+    virtual-host-name: ${spring.application.name}
+    metadataMap:
+      instanceId: ${spring.application.name}:${server.port}
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    availabilityZones:
+      default: ${APPLICATION_DOMAIN:${DOMAIN:defaultZone}}
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${service.eureka.defaultZone}
+
+endpoints:
+  health:
+    id: health
+    sensitive: false
+    enabled: true
+
+#kafka config
+kafka:
+  consumer:
+    group: ${spring.application.name}
+    interval: 1000
+    offsetReset: smallest
+    zookeeper:
+      connect: ${service.kafka.zookeeper.connect}
+      connectTimeOut: 15000
+      sessionTimeout: 15000
+      synctime: 200
+    topics:
+      userlocation:
+        name: user_location
+        partitions: 3
+        replicationFactor: 1
+      syncproducttocompany:
+        name: sync-productprices-to-company
+        partitions: 3
+        replicationFactor: 1
+      shortmessage:
+        name: short_message
+        partitions: 3
+        replicationFactor: 1
+  producer:
+    zookeeper:
+      connect: ${service.kafka.broker.connect}
+      connectTimeOut: 15000
+      sessionTimeout: 15000
+      synctime: 200
+    topics:
+      userlocation:
+        name: user_location
+        partitions: 3
+        replicationFactor: 1
+      company-updated:
+        name: company-updated
+        partitions: 3
+        replicationFactor: 1
+      walk-update:
+        name: walk-update
+        partitions: 3
+        replicationFactor: 1
+      heartrate-update:
+        name: heartrate-update
+        partitions: 3
+        replicationFactor: 1
+      bloodpressure-update:
+        name: bloodpressure-update
+        partitions: 8
+        replicationFactor: 1      
+      heartbeat:
+        name: heartbeat
+        partitions: 8
+        replicationFactor: 1
+      shortmessage:
+        name: short_message
+        partitions: 3
+        replicationFactor: 1
+      terminalsGroupChange:
+        name: terminalsgroup_change
+        partitions: 3
+        replicationFactor: 1
+
+checkToken:
+  endpoint: http://pension-system-service/systemserver/oauth/check_token?token=%s
+  myinfo: http://pension-system-service/systemserver/users/myInfo
+
+#elderappGateway endPoint
+pensionGateway:
+  endpoint:
+    catalog:
+      findCatalogs: http://pension-system-service/systemserver/catalogs?page={page}&size={size}&type={type}
+      saveCatalog: http://pension-system-service/systemserver/catalogs
+      findCataLogById: http://pension-system-service/systemserver/catalogs/{uuid}
+      findCataLogByCode: http://pension-system-service/systemserver/catalogs/{code}/bycode
+      updateCataLogById: http://pension-system-service/systemserver/catalogs/{uuid}
+      deleteCataLogById: http://pension-system-service/systemserver/catalogs/{uuid}
+    category:
+      findCategoriesByCatalogUuid: http://pension-system-service/systemserver/catalogs/{cataloguuid}/categories?page={page}&size={size}
+      findCategoriesByCatalogCode: http://pension-system-service/systemserver/catalogs/{code}/categories/bycode?page={page}&size={size}
+      findCategoriesByParentId: http://pension-system-service/systemserver/categories/{parentId}/children?page={page}&size={size}
+      saveCategoryByCatalogId: http://pension-system-service/systemserver/catalogs/{cataloguuid}/categories
+      findCategoryById: http://pension-system-service/systemserver/categories/{uuid}
+      findCategoryByCode: http://pension-system-service/systemserver/categories/{code}/bycode
+      saveCategoryByParentId: http://pension-system-service/systemserver/categories/{parentId}/children
+      updateCategoryById: http://pension-system-service/systemserver/categories/{uuid}
+      deleteCategoryById: http://pension-system-service/systemserver/categories/{uuid}
+    organization:
+      saveOrganization: http://pension-system-service/systemserver/organizations
+      findOrganizationById: http://pension-system-service/systemserver/organizations/{uuid}
+      findOrganizationByCode: http://pension-system-service/systemserver/organizations/{code}/bycode
+      findOrganizationTreeById: http://pension-system-service/systemserver/organizations/{uuid}/tree
+      updateOrganizationById: http://pension-system-service/systemserver/organizations/{uuid}
+      deleteOrganizationById: http://pension-system-service/systemserver/organizations/{uuid}
+      findOrganizationsByParentId: http://pension-system-service/systemserver/organizations/{parentId}/children?page={page}&size={size}&keyword={keyword}
+      findOrganizationsByParentCode: http://pension-system-service/systemserver/organizations/{parentCode}/children?page={page}&size={size}&keyword={keyword}      
+      findOrganizationSequence: http://pension-system-service/systemserver/organizations/sequence
+    users:
+      saveUser: http://pension-system-service/systemserver/users/add
+      updateUser: http://pension-system-service/systemserver/users/update
+      deleteUser: http://pension-system-service/systemserver/users/user/{loginName}
+      findUserById: http://pension-system-service/systemserver/users/{uuid}
+      findUserRolesById: http://pension-system-service/systemserver/users/{uuid}/roles
+      findUserAuthroties: http://pension-system-service/systemserver/users/{uuid}/authorities?style={style}
+      deleteUserById: http://pension-system-service/systemserver/users/{uuid}
+      findUserResources: http://pension-system-service/systemserver/users/{uuid}/resources 
+      findone: http://pension-system-service/systemserver/users/myInfo
+      findRolesByOrgIdAndKeyword: http://pension-system-service/systemserver/users?page={page}&size={size}&orgId={orgId}&keyword={keyword}&roleId={roleId}
+    oauth2:
+      checkToken: http://pension-system-service/systemserver/oauth/check_token?token=%s
+      login: http://pension-system-service/systemserver/oauth/accesstoken
+      findUserInfoByLoginName: http://pension-system-service/systemserver/users/userInfo/{loginName}
+      register: http://pension-system-service/systemserver/register
+      resetPassword: http://pension-system-service/systemserver/users/retrievePassword
+      updatePassword: http://pension-system-service/systemserver/users/password.update
+      checkname: http://pension-system-service/systemserver/checkloginname
+      refreshToken:  http://pension-system-service/systemserver/oauth/token?grant_type=refresh_token&client_id={clientId}&client_secret={clientId}&refresh_token={refreshToken}
+      myInfo: http://pension-system-service/systemserver/users/myInfo
+      findUserById:  http://pension-system-service/systemserver/users/{useruuid}
+    authority:
+      saveAuthority: http://pension-system-service/systemserver/authorities/add
+      updateAuthority: http://pension-system-service/systemserver/authorities/update
+      deleteAuthorityById: http://pension-system-service/systemserver/authorities/{uuid}
+      findAuthorityById: http://pension-system-service/systemserver/authorities/{uuid}
+      findAuthoritiesByOrgIdAndStyle: http://pension-system-service/systemserver/authorities?orgId={orgId}&style={style}
+    role:
+      saveRole: http://pension-system-service/systemserver/roles/add
+      updateRole: http://pension-system-service/systemserver/roles/update
+      deleteRoleById: http://pension-system-service/systemserver/roles/{uuid}
+      findRoleById: http://pension-system-service/systemserver/roles/{uuid}
+      findRolesByOrgIdAndKeyword: http://pension-system-service/systemserver/roles?page={page}&size={size}&orgId={orgId}&keyword={keyword}
+      findRoleAuthroties: http://pension-system-service/systemserver/roles/{uuid}/authorities?style={style}
+
+      
